@@ -120,7 +120,7 @@ def dumper_by_debuginfo(verdir):
 def do_abi_compliance_check(common_dir, old_dumpi, new_dumpi, old_version, new_version):
     os.system('abi-compliance-checker -l ' + old_dumpi +
               ' -old ' + common_dir + '/' + old_version + '/' + 'ABI-' + old_dumpi + '.dump'
-              ' -new ' + common_dir + '/' + new_version + '/' + 'ABI-' + new_dumpi + '.dump') == 0:
+              ' -new ' + common_dir + '/' + new_version + '/' + 'ABI-' + new_dumpi + '.dump')
 
 
 def abi_compliance_check(common_dir, dumps, verdirs):
