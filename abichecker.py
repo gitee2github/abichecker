@@ -13,14 +13,14 @@ def move_file(src_path, dst_path, file):
     shutil.move(f_src, f_dst)
 
 
-class Package:
+class Package(object):
     def __init__(self, file_name):
         package_arch = file_name.split('.')[-2]
         package_name_version = re.sub(package_arch + '.rpm', '', file_name)
-        package_version = re.findall('-\d+.*$', package_name_version)[0]
-        package_name = re.sub(package_verison, '', package_name_version)
-        package_version = re.sub('^-', '', package_version)
-        package_version = re.sub('\.+$', '', package_version)
+        package_version = re.findall(r'-\d+.*$', package_name_version)[0]
+        package_name = re.sub(package_version, '', package_name_version)
+        package_version = re.sub(r'^-', '', package_version)
+        package_version = re.sub(r'\.+$', '', package_version)
         self.file_name = file_name
         self.name = package_name
         self.version = package_version
@@ -48,14 +48,14 @@ def get_version_num(packages):
 
 
 def get_sofile_name(sofilename):
-    return  re.findall('.*.so', sofilename)[0]
+    return  re.findall(r'.*.so', sofilename)[0]
 
 
 def get_rpms(pkg, filepath):
     files = os.listdir(filepath)
     rpms = []
-    for file in files:
-        if file.endswith('.rpm') and file.startswith(pkg):
+    for eachfile in files:
+        if eachfile.endswith('.rpm') and file.startswith(pkg):
             rpms.append(file)
     return rpms
 
@@ -74,7 +74,6 @@ def check_valid_rpmnum(packages):
         return False
 
 
-
 def check_valid_version(packages):
     version_num = get_version_num(packages)
     if len(version_num) != 2:
@@ -87,7 +86,7 @@ def check_valid_version(packages):
 def rpm_uncompress(packages, common_dir):
     version_num = get_version_num(packages)
     if LooseVersion(version_num[0]) > LooseVersion(version_num[1]):
-        version_num[0], version_num[1] = version_num[1],version_num[0]
+        version_num[0], version_num[1] = version_num[1], version_num[0]
     os.chdir(common_dir)
     for version in version_num:
         if not os.path.exists(version):
@@ -103,8 +102,8 @@ def dumper_by_debuginfo(verdir):
     os.chdir(verdir)
     sofiles = []
     for root, dirs, files in os.walk(verdir):
-        for file in files:
-            full_file = os.path.join(root, file)
+        for eachfile in files:
+            full_file = os.path.join(root, eachfile)
             if re.match('.*\.so.*', full_file) and not os.path.islink(full_file):
                 sofiles.append(full_file)
     res = []
@@ -117,6 +116,8 @@ def dumper_by_debuginfo(verdir):
                          + ' -o ' + 'ABI-' + sofile_name + '.dump') == 0:
                 res.append(sofile_name)
     return res
+
+
 def do_abi_compliance_check(common_dir, old_dumpi, new_dumpi, old_version, new_version):
     os.system('abi-compliance-checker -l ' + old_dumpi +
               ' -old ' + common_dir + '/' + old_version + '/' + 'ABI-' + old_dumpi + '.dump'
@@ -148,10 +149,8 @@ def abi_compliance_check(common_dir, dumps, verdirs):
                 do_abi_compliance_check(common_dir, new_dump[i], new_dump[i], verdirs[0], verdirs[1])
 
 
-if __name__ == 'main':
-    pkg = sys.argv[1]
+def main_function(pkg, common_dir):
     analyze_type = 'debuginfo'
-    common_dir = '/root/checkdir/' + pkg
     rpms = get_rpms(pkg, common_dir)
     packages = []
     for rpm in rpms:
@@ -163,3 +162,7 @@ if __name__ == 'main':
         for verdir in verdirs:
             dumps.append(dumper_by_debuginfo(common_dir + '/' + verdir))
         abi_compliance_check(common_dir, dumps, verdirs)
+
+
+if __name__ == '__main__':
+    main_function(sys.argv[1], '/root/checkdir/' + sys.argv[1])
