@@ -5,16 +5,25 @@ import re
 import sys
 from disutils.version import LooseVersion
 
-def move_file(src_path, dst_path, file):
-    f_src = os.path.join(src_path, file)
+def move_file(src_path, dst_path, infile):
+    """
+    move infile from src_path to dst_path
+    """
+    f_src = os.path.join(src_path, infile)
     if not os.path.exists(dst_path):
         os.mkdir(dst_path)
-    f_dst = os.path.join(dst_path, file)
+    f_dst = os.path.join(dst_path, infile)
     shutil.move(f_src, f_dst)
 
 
 class Package(object):
+    """
+    rpm package
+    """
     def __init__(self, file_name):
+        """
+        init function
+        """
         package_arch = file_name.split('.')[-2]
         package_name_version = re.sub(package_arch + '.rpm', '', file_name)
         package_version = re.findall(r'-\d+.*$', package_name_version)[0]
@@ -35,11 +44,17 @@ class Package(object):
             self.type='main'
 
     def __str__(self):
+        """
+        string of Package
+        """
         return 'Name: ' + self.name + ', Version: ' + self.version +\
                ', Arch: ' + self.arch
 
 
 def get_version_num(packages):
+    """
+    get the version of given packages
+    """
     version_num = []
     for package in packages:
         if package.version not in version_num:
@@ -48,10 +63,17 @@ def get_version_num(packages):
 
 
 def get_sofile_name(sofilename):
+    """
+    get the .so file name
+    ie: foo.so.0.0 -> foo.so
+    """
     return  re.findall(r'.*.so', sofilename)[0]
 
 
 def get_rpms(pkg, filepath):
+    """
+    get .rpm files starts with pkg in the given filepath
+    """
     files = os.listdir(filepath)
     rpms = []
     for eachfile in files:
@@ -61,6 +83,9 @@ def get_rpms(pkg, filepath):
 
 
 def check_valid_rpmnum(packages):
+    """
+    check if the number of .rpm files is valid
+    """
     type_num = {}
     for package in packages:
         if package.type in type_num.keys():
@@ -75,6 +100,9 @@ def check_valid_rpmnum(packages):
 
 
 def check_valid_version(packages):
+    """
+    check if the package version is valid
+    """
     version_num = get_version_num(packages)
     if len(version_num) != 2:
         print('The version to be checked is not 2.')
@@ -84,6 +112,9 @@ def check_valid_version(packages):
 
 
 def rpm_uncompress(packages, common_dir):
+    """
+    uncompress the rpm packages in common_dir
+    """
     version_num = get_version_num(packages)
     if LooseVersion(version_num[0]) > LooseVersion(version_num[1]):
         version_num[0], version_num[1] = version_num[1], version_num[0]
@@ -99,12 +130,15 @@ def rpm_uncompress(packages, common_dir):
 
 
 def dumper_by_debuginfo(verdir):
+    """
+    generate .dump file by debuginfo .rpm file
+    """
     os.chdir(verdir)
     sofiles = []
     for root, dirs, files in os.walk(verdir):
         for eachfile in files:
             full_file = os.path.join(root, eachfile)
-            if re.match('.*\.so.*', full_file) and not os.path.islink(full_file):
+            if re.match(r'.*\.so.*', full_file) and not os.path.islink(full_file):
                 sofiles.append(full_file)
     res = []
     if len(sofiles) > 0:
@@ -119,12 +153,18 @@ def dumper_by_debuginfo(verdir):
 
 
 def do_abi_compliance_check(common_dir, old_dumpi, new_dumpi, old_version, new_version):
+    """
+    abi compliance check
+    """
     os.system('abi-compliance-checker -l ' + old_dumpi +
               ' -old ' + common_dir + '/' + old_version + '/' + 'ABI-' + old_dumpi + '.dump'
               ' -new ' + common_dir + '/' + new_version + '/' + 'ABI-' + new_dumpi + '.dump')
 
 
 def abi_compliance_check(common_dir, dumps, verdirs):
+    """
+    check the compatibility by given .dump files in common_dir + verdirs
+    """
     old_dump = dumps[0]
     new_dump = dumps[1]
     if len(old_dump) == 0:
@@ -150,6 +190,9 @@ def abi_compliance_check(common_dir, dumps, verdirs):
 
 
 def main_function(pkg, common_dir):
+    """
+    main_function
+    """
     analyze_type = 'debuginfo'
     rpms = get_rpms(pkg, common_dir)
     packages = []
@@ -165,4 +208,11 @@ def main_function(pkg, common_dir):
 
 
 if __name__ == '__main__':
-    main_function(sys.argv[1], '/root/checkdir/' + sys.argv[1])
+    """
+    main
+    1. create a directory named sys.argv[1] (libfoo) in sys.argv[2] (/root/checkdir/);
+    2. put the rpm files and debuginfo files of 2 versions in libfoo;
+    3. run 'python abichecker.py 'libfoo' '/root/checkdir/'
+    4. the results are saved in /root/checkdir/libfoo/compat_reports
+    """
+    main_function(sys.argv[1], sys.argv[2] + sys.argv[1])
