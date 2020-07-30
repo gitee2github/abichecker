@@ -6,7 +6,7 @@ import shutil
 import traceback
 import re
 import sys
-from disutils.version import LooseVersion
+from distutils.version import LooseVersion
 
 def move_file(src_path, dst_path, infile):
     """
@@ -80,8 +80,8 @@ def get_rpms(pkg, filepath):
     files = os.listdir(filepath)
     rpms = []
     for eachfile in files:
-        if eachfile.endswith('.rpm') and file.startswith(pkg):
-            rpms.append(file)
+        if eachfile.endswith('.rpm') and eachfile.startswith(pkg):
+            rpms.append(eachfile)
     return rpms
 
 
