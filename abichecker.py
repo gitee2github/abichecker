@@ -3,10 +3,9 @@ abichecker tool
 """
 import os
 import shutil
-import traceback
 import re
 import sys
-from distutils.version import LooseVersion
+import distutils.version
 
 def move_file(src_path, dst_path, infile):
     """
@@ -119,7 +118,7 @@ def rpm_uncompress(packages, common_dir):
     uncompress the rpm packages in common_dir
     """
     version_num = get_version_num(packages)
-    if LooseVersion(version_num[0]) > LooseVersion(version_num[1]):
+    if distutils.version.LooseVersion(version_num[0]) > distutils.version.LooseVersion(version_num[1]):
         version_num[0], version_num[1] = version_num[1], version_num[0]
     os.chdir(common_dir)
     for version in version_num:
@@ -173,7 +172,7 @@ def abi_compliance_check(common_dir, dumps, verdirs):
     if len(old_dump) == 0:
         print('Error: Did not find .so file in old_version')
         return
-    if len(new_dump)==0:
+    if len(new_dump) == 0:
         print('Error: Did not find .so file in new_version')
         return
     os.chdir(common_dir)
