@@ -14,7 +14,7 @@ yum install -y abi-dumper abi-compliance-checker
 #### 使用说明
 
 1.  创建工作目录：`/root/checkdir/`，rpm包存放目录`libfoo`；
-2.  将`libfoo`的rpm包、debuginfo包存放到目录`libfoo`；
+2.  将`libfoo`的rpm包`libfoo-***.rpm`、debuginfo包存放到目录`libfoo-debuginfo-***.rpm`；
 3.  执行`python abichecker.py 'libfoo' '/root/checkdir/'`；
 4.  ABI检查结果存放在`/root/checkdir/libfoo/compat_reports`目录下。
 
