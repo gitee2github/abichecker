@@ -9,15 +9,15 @@ abichecker为ABI兼容性检查工具，该工具主要调用[abi-compliance-che
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  安装abi-dumper、abi-compliance-checker工具。
+2.  下载abichecker.py脚本。
 
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  创建工作目录：`/root/checkdir/`，rpm包存放目录`libfoo`；
+2.  将`libfoo`的rpm包、debuginfo包存放到目录`libfoo`；
+3.  执行`python abichecker.py 'libfoo' '/root/checkdir/'`；
+4.  ABI检查结果存放在`/root/checkdir/libfoo/compat_reports`目录下。
 
 #### 参与贡献
 
