@@ -1,7 +1,7 @@
 # abichecker
 
 #### 介绍
-An abi checker tool
+abichecker为ABI兼容性检查工具，该工具主要调用[abi-compliance-checker](https://github.com/lvc/abi-dumper)、[abi-dumper](https://github.com/lvc/abi-dumper)工具接口，分析rpm包、debuginfo包，实现ABI兼容性检查。
 
 #### 软件架构
 软件架构说明
