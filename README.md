@@ -1,23 +1,22 @@
 # abichecker
 
 #### 介绍
-An abi checker tool
-
-#### 软件架构
-软件架构说明
-
+abichecker为ABI兼容性检查工具，该工具主要调用[abi-compliance-checker](https://github.com/lvc/abi-dumper)、[abi-dumper](https://github.com/lvc/abi-dumper)工具接口，分析rpm包、debuginfo包，实现ABI兼容性检查。
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  安装abi-dumper、abi-compliance-checker工具。
+```shell
+yum install -y abi-dumper abi-compliance-checker
+```
+2.  下载abichecker.py脚本。
 
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  创建工作目录：`/root/checkdir/`，rpm包存放目录`libfoo`；
+2.  将`libfoo`的rpm包`libfoo-***.rpm`、debuginfo包`libfoo-debuginfo-***.rpm`存放到目录`libfoo`；
+3.  执行`python abichecker.py 'libfoo' '/root/checkdir/'`；
+4.  ABI检查结果存放在`/root/checkdir/libfoo/compat_reports`目录下。
 
 #### 参与贡献
 
