@@ -108,7 +108,9 @@ def check_valid_rpmnum(packages):
             type_num[package.type] += 1
         else:
             type_num[package.type] = 1
-    if type_num['main'] == 2 or 'libs' in type_num.keys() and type_num['libs'] == 2:
+    if type_num['main'] == 2 or \
+        'libs' in type_num.keys() and type_num['libs'] == 2 or \
+        'devel' in type_num.keys() and type_num['devel'] == 2:
         return True
     else:
         print('The valid number of main rpmfiles and lib rpmfiles should be 2+2 or 0+2 or 2+0')
